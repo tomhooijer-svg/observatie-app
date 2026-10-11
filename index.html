@@ -15,90 +15,131 @@ body{ background: var(--vlak-2); }
 
 .balk{
   position: sticky; top: 0; z-index: 30;
-  background: rgba(255,255,255,.88);
+  background: rgba(255,255,255,.9);
   -webkit-backdrop-filter: saturate(180%) blur(16px);
   backdrop-filter: saturate(180%) blur(16px);
   border-bottom: 1px solid var(--lijn);
-  padding: 10px 16px calc(10px + env(safe-area-inset-top)) ;
-  padding-top: calc(10px + env(safe-area-inset-top));
-  display: flex; align-items: center; gap: 12px;
+  padding: calc(9px + env(safe-area-inset-top)) 14px 9px;
+  display: flex; align-items: center; gap: 10px;
 }
-.balk .naam{ font-size: 1.02rem; font-weight: 650; letter-spacing: -.022em; }
-.balk .waar{ font-size: .8rem; color: var(--inkt-3); }
+.balk .naam{ font-size: 1rem; font-weight: 650; letter-spacing: -.022em; }
+.balk .waar{ font-size: .78rem; color: var(--inkt-3); }
 .rek{ flex: 1; }
 
-.blad{ max-width: 980px; margin: 0 auto; padding: 22px 16px 80px; }
-.blad > h2{ font-size: 1.15rem; font-weight: 650; letter-spacing: -.022em;
-            margin: 0 0 4px; }
-.blad > .sub{ font-size: .88rem; color: var(--inkt-3); margin: 0 0 20px; }
+.vel{ max-width: 1000px; margin: 0 auto; padding: 20px 14px 90px; }
+.vel h2{ font-size: 1.15rem; font-weight: 650; letter-spacing: -.022em; margin: 0 0 4px; }
+.vel .sub{ font-size: .86rem; color: var(--inkt-3); margin: 0 0 18px; }
 
-/* ── groepen ───────────────────────────────────────────── */
-.groepen{ display: grid; gap: 12px;
-          grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
-.groepkaart{
-  background: var(--vlak); border: 0; border-radius: var(--rond-m);
-  box-shadow: var(--schaduw-1); padding: 18px 16px; cursor: pointer;
-  text-align: left; display: flex; flex-direction: column; gap: 10px;
-  transition: transform .16s var(--veer), box-shadow .16s ease;
-}
+.groepen{ display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); }
+.groepkaart{ background: var(--vlak); border: 0; border-radius: var(--rond-m);
+  box-shadow: var(--schaduw-1); padding: 16px; cursor: pointer; text-align: left;
+  display: flex; flex-direction: column; gap: 9px;
+  transition: transform .16s var(--veer), box-shadow .16s ease; }
 .groepkaart:hover{ transform: translateY(-2px); box-shadow: var(--schaduw-2); }
-.groepkaart .bol{
-  width: 42px; height: 42px; border-radius: 12px; flex: none;
+.groepkaart .bol{ width: 40px; height: 40px; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  color: #fff; font-weight: 650; font-size: .9rem; letter-spacing: -.02em;
-}
-.groepkaart .gn{ font-size: 1rem; font-weight: 600; letter-spacing: -.016em; }
-.groepkaart .gs{ font-size: .82rem; color: var(--inkt-3); }
+  color:#fff; font-weight:650; font-size:.88rem; }
+.groepkaart .gn{ font-size: .98rem; font-weight: 600; }
+.groepkaart .gs{ font-size: .8rem; color: var(--inkt-3); }
 
-/* ── kinderen ──────────────────────────────────────────── */
-.kinderen{
-  display: grid; gap: 18px 10px;
-  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
-}
-.kind{ cursor: pointer; }
-.kind .picto-rond{ width: 64px; height: 64px; font-size: 1.15rem; }
-@media (min-width: 700px){
-  .kinderen{ grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
-  .kind .picto-rond{ width: 72px; height: 72px; font-size: 1.3rem; }
-}
+/* ── kinderen ─────────────────────────────────────────── */
+.knoprij{ display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.kinderen{ display: grid; gap: 16px 8px; grid-template-columns: repeat(auto-fill, minmax(82px,1fr)); }
+@media (min-width: 700px){ .kinderen{ grid-template-columns: repeat(auto-fill, minmax(94px,1fr)); } }
+.kind{ cursor: pointer; position: relative; }
+.kind .picto-rond{ width: 62px; height: 62px; font-size: 1.1rem; }
+@media (min-width: 700px){ .kind .picto-rond{ width: 70px; height: 70px; } }
+.kind .vink{ position: absolute; top: -2px; right: 50%; transform: translateX(34px);
+  width: 20px; height: 20px; border-radius: 50%; background: var(--goed); color:#fff;
+  font-size: .68rem; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 2px #fff; }
 
-.leeg{ text-align: center; padding: 48px 20px; color: var(--inkt-3); }
-.leeg .groot{ font-size: 2.2rem; margin-bottom: 10px; }
+/* ── raster ───────────────────────────────────────────── */
+.rasterdoos{ overflow-x: auto; background: var(--vlak); border-radius: var(--rond-m);
+  box-shadow: var(--schaduw-1); -webkit-overflow-scrolling: touch; }
+table.raster{ border-collapse: collapse; width: 100%; font-size: .86rem; }
+table.raster th, table.raster td{ border-bottom: 1px solid var(--lijn); padding: 0; }
+table.raster thead th{ position: sticky; top: 0; background: var(--vlak); z-index: 2;
+  font-weight: 600; font-size: .76rem; color: var(--inkt-2); text-align: left;
+  padding: 10px 8px; vertical-align: bottom; line-height: 1.25; min-width: 104px; }
+table.raster tbody th{ position: sticky; left: 0; background: var(--vlak); z-index: 1;
+  text-align: left; font-weight: 550; padding: 8px 10px; white-space: nowrap;
+  box-shadow: 1px 0 0 var(--lijn); min-width: 118px; }
+.vak{ width: 100%; min-height: 46px; border: 0; background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: .74rem;
+  font-weight: 600; color: var(--inkt-4); }
+.vak .bal{ width: 26px; height: 26px; border-radius: 50%; border: 2px dashed var(--inkt-4);
+  display: flex; align-items: center; justify-content: center; color: #fff; font-size: .82rem; }
+.vak.gezet .bal{ border-style: solid; border-color: transparent; }
 
-/* ── scherm verbergen ──────────────────────────────────── */
-#deken{
-  position: fixed; inset: 0; z-index: 900; display: none;
-  background: var(--vlak-2);
-  align-items: center; justify-content: center; flex-direction: column; gap: 18px;
-}
+/* ── observatieblad ───────────────────────────────────── */
+.bladkop{ display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.bladkop .rond{ width: 50px; height: 50px; border-radius: 50%; flex: none;
+  background-size: cover; background-position: center; color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:600; }
+.bladkop h3{ margin: 0; font-size: 1.15rem; font-weight: 650; letter-spacing: -.02em; }
+.bladkop .kl{ font-size: .8rem; color: var(--inkt-3); }
+.kop{ font-size: .78rem; font-weight: 600; color: var(--inkt-2); margin: 18px 0 8px;
+  text-transform: none; letter-spacing: -.005em; }
+.doelrij{ border: 1px solid var(--lijn); border-radius: var(--rond-s); padding: 10px 12px; margin-bottom: 8px; }
+.doelrij .dn{ font-size: .88rem; font-weight: 550; margin-bottom: 8px; line-height: 1.35; }
+.doelrij .dm{ font-size: .74rem; color: var(--inkt-3); }
+.standrij{ display: flex; gap: 6px; }
+.standknop{ flex: 1; border: 1.5px solid var(--lijn); background: var(--vlak);
+  border-radius: var(--rond-s); padding: 9px 4px; font-size: .78rem; font-weight: 600;
+  color: var(--inkt-2); cursor: pointer; }
+.standknop.aan{ color: #fff; border-color: transparent; }
+textarea.notitie{ width: 100%; font: inherit; font-size: .95rem; padding: 12px;
+  border-radius: var(--rond-s); border: 1.5px solid var(--lijn); min-height: 86px; resize: vertical; }
+textarea.notitie:focus{ outline: none; border-color: var(--accent); }
+.zoek{ width: 100%; font: inherit; font-size: .92rem; padding: 10px 12px;
+  border-radius: var(--rond-s); border: 1.5px solid var(--lijn); margin-bottom: 8px; }
+.zoek:focus{ outline: none; border-color: var(--accent); }
+.doelkeus{ max-height: 190px; overflow-y: auto; border: 1px solid var(--lijn);
+  border-radius: var(--rond-s); }
+.doelkeus button{ display: block; width: 100%; text-align: left; border: 0; background: none;
+  padding: 9px 12px; font-size: .85rem; cursor: pointer; border-bottom: 1px solid var(--vlak-2); }
+.doelkeus button:hover{ background: var(--vlak-2); }
+.doelkeus .mt{ font-size: .72rem; color: var(--inkt-3); }
+.bladvoet{ display: flex; gap: 8px; margin-top: 20px; }
+
+.leeg{ text-align: center; padding: 44px 20px; color: var(--inkt-3); }
+.leeg .groot{ font-size: 2.1rem; margin-bottom: 8px; }
+
+#deken{ position: fixed; inset: 0; z-index: 900; display: none; background: var(--vlak-2);
+  align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
 #deken.aan{ display: flex; }
-#deken p{ color: var(--inkt-3); font-size: .95rem; margin: 0; }
 </style>
 </head>
 <body>
 
 <header class="balk">
-  <div>
-    <div class="naam">Kijk mee</div>
+  <div style="min-width:0">
+    <div class="naam" id="titel">Kijk mee</div>
     <div class="waar" id="waar">laden…</div>
   </div>
   <div class="rek"></div>
-  <button class="knop knop-stil knop-klein" id="verberg" title="Verberg het scherm">Scherm uit</button>
+  <button class="knop knop-stil knop-klein" id="verberg">Scherm uit</button>
   <button class="knop knop-stil knop-klein" id="uit">Uitloggen</button>
 </header>
 
-<main class="blad" id="blad">
+<main class="vel" id="vel">
   <div class="leeg"><div class="groot">⏳</div><p>Een ogenblik…</p></div>
 </main>
 
+<div class="overlay" id="overlay"><div class="blad" id="blad"></div></div>
+<div class="melding" id="melding"></div>
+
 <div id="deken">
   <div style="font-size:2.6rem">🙈</div>
-  <p>Het scherm staat even uit.</p>
+  <p style="color:var(--inkt-3)">Het scherm staat even uit.</p>
   <button class="knop knop-primair" id="deken-uit">Weer laten zien</button>
 </div>
 
 <script src="src/kb-supabase.js"></script>
 <script src="src/obs-sessie.js"></script>
+<script src="src/obs-data.js"></script>
+<script src="src/obs-blad.js"></script>
 <script src="src/obs-app.js"></script>
 </body>
 </html>
