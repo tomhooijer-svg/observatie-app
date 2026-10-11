@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<!-- Er staan klaslijsten achter deze app. robots.txt werkt niet voor een
+     projectsite (die moet op de domeinwortel staan), dus zeggen we het hier. -->
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#fbf8f4">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Crect%20width=%2264%22%20height=%2264%22%20rx=%2214%22%20fill=%22%23fbf8f4%22/%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%2220%22%20fill=%22none%22%20stroke=%22%233b6ff0%22%20stroke-width=%225%22/%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%227%22%20fill=%22%232e9e6b%22/%3E%3C/svg%3E">
+<title>Inloggen — Kijk mee</title>
+<link rel="stylesheet" href="src/kb-stijl.css">
+<style>
+body.inlog{
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 30px 20px;
+  background:
+    radial-gradient(1100px 620px at 8% -12%,  #ffeede 0%, transparent 62%),
+    radial-gradient(1000px 560px at 96% 4%,   #e2f0fb 0%, transparent 58%),
+    radial-gradient(900px 640px at 42% 110%,  #eaf6ec 0%, transparent 60%),
+    #fbf8f4;
+}
+.kaart{
+  width: 100%; max-width: 420px;
+  background: rgba(255,255,255,.86); border-radius: 22px; padding: 34px 32px 28px;
+  box-shadow: 0 1px 2px rgba(20,28,44,.05), 0 14px 40px rgba(20,28,44,.09);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+.merk{
+  font-size: 1.9rem; font-weight: 650; letter-spacing: -.032em; margin: 0 0 4px;
+  background: linear-gradient(96deg, #3b6ff0, #17a9bd 42%, #37ab74 72%, #e79a1f);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.onder{ font-size: .95rem; color: var(--inkt-3); margin: 0 0 26px; }
+.veld{ margin-bottom: 14px; }
+.veld label{ display: block; font-size: .83rem; font-weight: 550; color: var(--inkt-2);
+             margin-bottom: 6px; letter-spacing: -.008em; }
+.veld input{
+  width: 100%; font: inherit; font-size: 1rem; color: var(--inkt);
+  padding: 12px 14px; border-radius: 12px;
+  border: 1.5px solid var(--lijn); background: #fff;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.veld input:focus{
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3.5px var(--accent-zacht);
+}
+.groot{ width: 100%; display: flex; justify-content: center; padding: 14px 18px;
+        font-size: 1.02rem; font-weight: 600; margin-top: 8px; }
+.wissel{ margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--vlak-2);
+         font-size: .89rem; color: var(--inkt-3); text-align: center; }
+.wissel button{ color: var(--accent); font-weight: 600; font-size: inherit;
+                background: none; border: 0; cursor: pointer; }
+.melder{
+  margin: 0 0 16px; padding: 11px 14px; border-radius: 11px; font-size: .89rem;
+  line-height: 1.45; display: none;
+}
+.melder.aan{ display: block; }
+.melder.mis { background: var(--stop-zacht); color: #8f3232; }
+.melder.goed{ background: var(--goed-zacht); color: #1f6b4a; }
+.melder.bezig{ background: var(--accent-zacht); color: #2b4f9e; }
+.kaart.bezig{ opacity: .6; pointer-events: none; }
+.uitleg{ font-size: .82rem; color: var(--inkt-3); line-height: 1.5; margin: 14px 0 0; }
+</style>
+</head>
+<body class="inlog">
+
+<main class="kaart" id="kaart">
+  <h1 class="merk">Kijk mee</h1>
+  <p class="onder" id="onder">Observeren vanuit het spel.</p>
+
+  <div class="melder" id="melder"></div>
+
+  <form id="formulier" autocomplete="on">
+    <div class="veld">
+      <label for="email">E-mailadres</label>
+      <input id="email" type="email" inputmode="email" autocomplete="username"
+             placeholder="jij@school.nl" required>
+    </div>
+    <button type="submit" class="knop knop-primair groot" id="verstuur">Stuur mij een inloglink</button>
+  </form>
+
+  <p class="uitleg" id="uitleg">
+    Je krijgt een e-mail met een link. Daarmee ben je ingelogd — geen wachtwoord nodig.
+  </p>
+
+  <div class="wissel" id="wissel">
+    <button type="button" id="naar-ww">Liever met een wachtwoord inloggen</button>
+  </div>
+</main>
+
+<script src="src/kb-supabase.js"></script>
+<script src="src/obs-sessie.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var stand = 'link';          /* 'link' of 'wachtwoord' */
+  var bezig = false;
+
+  function meld(tekst, soort){
+    var m = $('melder');
+    m.textContent = tekst || '';
+    m.className = 'melder' + (tekst ? ' aan ' + (soort || 'mis') : '');
+  }
+  function druk(aan){
+    bezig = aan;
+    $('kaart').classList.toggle('bezig', aan);
+  }
+
+  /* ── eerst: komen we terug uit een inloglink? ────────────────────── */
+  OBS.verwerkLink().then(function (uit) {
+    if (uit === 'ingelogd') { location.replace('index.html'); return; }
+    /* Al ingelogd via het Keuzebord? Dan hoeft dit scherm niet. */
+    if (SB.ingelogd()) { location.replace('index.html'); return; }
+    teken();
+    var reden = OBS.loginReden();
+    if (reden) meld(reden, 'mis');
+  }).catch(function (e) {
+    teken();
+    meld(e.message || 'Inloggen is niet gelukt.', 'mis');
+  });
+
+  function teken(){
+    var ww = stand === 'wachtwoord';
+    $('verstuur').textContent = ww ? 'Inloggen' : 'Stuur mij een inloglink';
+    $('uitleg').textContent = ww
+      ? 'Gebruik hetzelfde wachtwoord als in het Keuzebord.'
+      : 'Je krijgt een e-mail met een link. Daarmee ben je ingelogd — geen wachtwoord nodig.';
+    $('naar-ww').textContent = ww
+      ? 'Toch liever een inloglink per e-mail'
+      : 'Liever met een wachtwoord inloggen';
+    var oud = $('veld-ww');
+    if (ww && !oud) {
+      var d = document.createElement('div');
+      d.className = 'veld'; d.id = 'veld-ww';
+      d.innerHTML = '<label for="ww">Wachtwoord</label>' +
+                    '<input id="ww" type="password" autocomplete="current-password">';
+      $('formulier').insertBefore(d, $('verstuur'));
+    } else if (!ww && oud) {
+      oud.remove();
+    }
+  }
+
+  $('naar-ww').addEventListener('click', function () {
+    stand = stand === 'wachtwoord' ? 'link' : 'wachtwoord';
+    meld(''); teken();
+  });
+
+  $('formulier').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (bezig) return;
+    var email = $('email').value.trim();
+    if (!email) { meld('Vul je e-mailadres in.'); $('email').focus(); return; }
+
+    druk(true);
+    meld(stand === 'wachtwoord' ? 'Bezig met inloggen…' : 'Bezig met versturen…', 'bezig');
+
+    var werk = stand === 'wachtwoord'
+      ? SB.aanmelden(email, ($('ww') || {}).value || '').then(function () {
+          location.replace('index.html');
+        })
+      : SB.inloglinkSturen(email).then(function () {
+          meld('Gelukt. Kijk in je mail op ' + email + ' en klik op de link. ' +
+               'Niets gekregen? Kijk ook even in de ongewenste post.', 'goed');
+        });
+
+    werk.catch(function (err) {
+      if (err && err.offline) {
+        meld('Geen verbinding met de server. Controleer het internet en probeer het opnieuw.');
+      } else if (err && /invalid login|credentials/i.test(err.message || '')) {
+        meld('Dit e-mailadres of wachtwoord klopt niet.');
+      } else if (err && /rate|too many/i.test(err.message || '')) {
+        meld('Er zijn net al links gestuurd. Wacht een minuut en probeer het opnieuw.');
+      } else {
+        meld((err && err.message) || 'Er ging iets mis. Probeer het nog eens.');
+      }
+    }).then(function () { druk(false); });
+  });
+})();
+</script>
+</body>
+</html>

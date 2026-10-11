@@ -1,0 +1,13 @@
+{
+  "name": "Kijk mee — observeren",
+  "short_name": "Kijk mee",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#fbf8f4",
+  "theme_color": "#f2f4f7",
+  "orientation": "any",
+  "icons": [
+    { "src": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20192%20192'%3E%3Crect%20width='192'%20height='192'%20rx='42'%20fill='%23fbf8f4'/%3E%3Ccircle%20cx='96'%20cy='96'%20r='60'%20fill='none'%20stroke='%233b6ff0'%20stroke-width='15'/%3E%3Ccircle%20cx='96'%20cy='96'%20r='21'%20fill='%232e9e6b'/%3E%3C/svg%3E",
+      "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

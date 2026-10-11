@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f2f4f7">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2064%2064%22%3E%3Crect%20width=%2264%22%20height=%2264%22%20rx=%2214%22%20fill=%22%23fbf8f4%22/%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%2220%22%20fill=%22none%22%20stroke=%22%233b6ff0%22%20stroke-width=%225%22/%3E%3Ccircle%20cx=%2232%22%20cy=%2232%22%20r=%227%22%20fill=%22%232e9e6b%22/%3E%3C/svg%3E">
+<title>Kijk mee</title>
+<link rel="stylesheet" href="src/kb-stijl.css">
+<style>
+body{ background: var(--vlak-2); }
+
+.balk{
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(255,255,255,.88);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  backdrop-filter: saturate(180%) blur(16px);
+  border-bottom: 1px solid var(--lijn);
+  padding: 10px 16px calc(10px + env(safe-area-inset-top)) ;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  display: flex; align-items: center; gap: 12px;
+}
+.balk .naam{ font-size: 1.02rem; font-weight: 650; letter-spacing: -.022em; }
+.balk .waar{ font-size: .8rem; color: var(--inkt-3); }
+.rek{ flex: 1; }
+
+.blad{ max-width: 980px; margin: 0 auto; padding: 22px 16px 80px; }
+.blad > h2{ font-size: 1.15rem; font-weight: 650; letter-spacing: -.022em;
+            margin: 0 0 4px; }
+.blad > .sub{ font-size: .88rem; color: var(--inkt-3); margin: 0 0 20px; }
+
+/* ── groepen ───────────────────────────────────────────── */
+.groepen{ display: grid; gap: 12px;
+          grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.groepkaart{
+  background: var(--vlak); border: 0; border-radius: var(--rond-m);
+  box-shadow: var(--schaduw-1); padding: 18px 16px; cursor: pointer;
+  text-align: left; display: flex; flex-direction: column; gap: 10px;
+  transition: transform .16s var(--veer), box-shadow .16s ease;
+}
+.groepkaart:hover{ transform: translateY(-2px); box-shadow: var(--schaduw-2); }
+.groepkaart .bol{
+  width: 42px; height: 42px; border-radius: 12px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 650; font-size: .9rem; letter-spacing: -.02em;
+}
+.groepkaart .gn{ font-size: 1rem; font-weight: 600; letter-spacing: -.016em; }
+.groepkaart .gs{ font-size: .82rem; color: var(--inkt-3); }
+
+/* ── kinderen ──────────────────────────────────────────── */
+.kinderen{
+  display: grid; gap: 18px 10px;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+}
+.kind{ cursor: pointer; }
+.kind .picto-rond{ width: 64px; height: 64px; font-size: 1.15rem; }
+@media (min-width: 700px){
+  .kinderen{ grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+  .kind .picto-rond{ width: 72px; height: 72px; font-size: 1.3rem; }
+}
+
+.leeg{ text-align: center; padding: 48px 20px; color: var(--inkt-3); }
+.leeg .groot{ font-size: 2.2rem; margin-bottom: 10px; }
+
+/* ── scherm verbergen ──────────────────────────────────── */
+#deken{
+  position: fixed; inset: 0; z-index: 900; display: none;
+  background: var(--vlak-2);
+  align-items: center; justify-content: center; flex-direction: column; gap: 18px;
+}
+#deken.aan{ display: flex; }
+#deken p{ color: var(--inkt-3); font-size: .95rem; margin: 0; }
+</style>
+</head>
+<body>
+
+<header class="balk">
+  <div>
+    <div class="naam">Kijk mee</div>
+    <div class="waar" id="waar">laden…</div>
+  </div>
+  <div class="rek"></div>
+  <button class="knop knop-stil knop-klein" id="verberg" title="Verberg het scherm">Scherm uit</button>
+  <button class="knop knop-stil knop-klein" id="uit">Uitloggen</button>
+</header>
+
+<main class="blad" id="blad">
+  <div class="leeg"><div class="groot">⏳</div><p>Een ogenblik…</p></div>
+</main>
+
+<div id="deken">
+  <div style="font-size:2.6rem">🙈</div>
+  <p>Het scherm staat even uit.</p>
+  <button class="knop knop-primair" id="deken-uit">Weer laten zien</button>
+</div>
+
+<script src="src/kb-supabase.js"></script>
+<script src="src/obs-sessie.js"></script>
+<script src="src/obs-app.js"></script>
+</body>
+</html>
